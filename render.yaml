@@ -1,0 +1,50 @@
+services:
+  # ----------------------------------------------------
+  # 1. Backend REST API & Admin Control Center (Web Service)
+  # ----------------------------------------------------
+  - type: web
+    name: ysf-kaushalya-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: INSTITUTE_CODE
+        value: "21092"
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: Admin@YSF2026!
+      - key: JWT_SECRET
+        generateValue: true
+      - key: YSF_SUPPORT_PHONE
+        value: "098810-88850"
+      - key: YSF_SUPPORT_EMAIL
+        value: lmssupport@ysfskills.com
+      - key: YSF_SUPPORT_PHONE_ALT
+        value: "8956537504"
+      - key: YSF_SUPPORT_EMAIL_ALT
+        value: info@ysfskills.com
+
+  # ----------------------------------------------------
+  # 2. Student Mobile Web App (Static Site)
+  # ----------------------------------------------------
+  - type: web
+    name: ysf-kaushalya-student-app
+    runtime: static
+    plan: free
+    rootDir: mobile
+    buildCommand: npm install && npx expo export --platform web
+    staticPublishPath: dist
+    envVars:
+      - key: EXPO_PUBLIC_INSTITUTE_CODE
+        value: "21092"
+      - key: EXPO_PUBLIC_API_URL_WEB
+        fromService:
+          name: ysf-kaushalya-backend
+          type: web
+          property: host
+          value: https://${host}/api
